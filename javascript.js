@@ -86,7 +86,7 @@ checker.prototype.checkIfKing = function() {
   }
   if (this.coordY == 1 && !this.king && this.color == "black") {
     this.king = true;
-    this.id.style.border = "4px solid #FFFF000";
+    this.id.style.border = "4px solid #FFFF00";
   }
 }
 
