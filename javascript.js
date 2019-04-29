@@ -137,3 +137,241 @@ for (var i = 9; i <= 12; i++) {
   block[24 + 2 * i].occupied = true;
   block[24 + 2 * i].pieceId = b_checker[i];
 }
+
+//Piece selection
+the_checker = r_checker;
+
+//Function to show available moves for a selected piece
+function showMoves(piece) {
+  var match = false;
+  mustAttack = false;
+  if (selectedPiece) {
+    erase_roads(selectedPiece);
+  }
+  selectedPiece = piece;
+  var i, j; //used to maintain active pieces
+  for (j = 1; j <= 12; j++) {
+    if (the_checker[j].id == piece) {
+      i = j;
+      selectedPieceIndex = j;
+      match = true;
+    }
+  }
+  if (moveOne && !attackMoves(moveOne)) {
+    changeTurns(moveOne);
+    moveOne = undefined;
+    return false;
+  }
+  if (moveOne && moveOne != the_checker[i]) {
+    return false;
+  }
+  //no match is found, happens when it's one player's turn but they click on an opponent's piece
+  if (!match) {
+    return 0;
+  }
+  //set edges and movements of the piece that are possible
+  //For a red piece
+  if (the_checker[i].color == "red") {
+    tableLimit = 8;
+    tableLimitRight = 1;
+    tableLimitLeft = 8;
+    moveUpRight = 7;
+    moveUpLeft = 9;
+    moveDownRight = -9;
+    moveDownLeft = -7
+  }
+  //For a black piece
+  else {
+    tableLimit = 1;
+    tableLimitRight = 8;
+    tableLimitLeft = 1;
+    moveUpRight = -7;
+    moveUpLeft = -9;
+    moveDownRight = 9;
+    moveDownLeft = 7;
+  }
+
+  //Attack Check
+  attackMoves(the_checker[i]); //Check if this piece can attack
+
+  //Verify each move, if the piece can/cannot move there
+  if (!mustAttack) {
+    downLeft = checkMove(the_checker[i], tableLimit, tableLimitRight,
+      moveUpRight, downLeft);
+    downRight = checkMove(the_checker[i], tableLimit, tableLimitLeft,
+      moveUpLeft, downRight);
+    //check if piece is a king
+    if (the_checker[i].king) {
+      upLeft = checkMove(the_checker[i], reverse_tableLimit, tableLimitRight,
+        moveDownRight, upLeft);
+      upRight = checkMove(the_checker[i], reverse_tableLimit, tableLimitLeft,
+        moveDownLeft, upRight);
+    }
+  }
+  if (downLeft || downRight || upLeft || upRight) {
+    return true;
+  }
+  return false;
+}
+
+//Function to delete image of Checker
+function erase_roads(piece) {
+  if (downRight) {
+    block[downRight].id.style.background = "black";
+  }
+  if (downLeft) {
+    block[downLeft].id.style.background = "black";
+  }
+  if (upRight) {
+    block[upRight].id.style.background = "black";
+  }
+  if (upLeft) {
+    block[upLeft].id.style.background = "black";
+  }
+}
+
+//Piece movement function
+function makeMove(index) {
+  var isMove = false;
+  //For when game has started but no piece is selected
+  if (!selectedPiece) {
+    return false;
+  }
+  if (index != upLeft && index != upRight && index != downRight && index != downLeft) {
+    erase_roads(0);
+    selectedPiece = undefined;
+    return false;
+  }
+  //Perspective of moving player
+  if (the_checker[1].color == "red") {
+    cpy_downRight = upRight;
+    cpy_downLeft = upLeft;
+    cpy_upRight = downRight;
+    cpy_upLeft = downLeft;
+  } else {
+    cpy_downRight = upLeft;
+    cpy_downLeft = upRight;
+    cpy_upRight = downLeft;
+    cpy_upLeft = downRight;
+  }
+  //For ability to attack
+  if (mustAttack) {
+    multiplier = 2;
+  } else {
+    multiplier = 1;
+  }
+
+  //Different movements
+  //Up Right
+  if (index == cpy_upRight) {
+    isMove = true;
+    if (the_checker[1].color == "red") {
+      //Move the piece
+      executeMove(multiplier * 1, multiplier * 1, multiplier * 9);
+      //Eliminate the piece if it was jumped
+      if (mustAttack) {
+        elimiateCheck(index - 9);
+      }
+    }
+    else {
+      executeMove(multiplier * 1, multiplier * -1, multiplier * -7);
+      //Eliminate the piece if it was jumps
+      if (mustAttack) {
+        elimiateCheck(index + 7);
+      }
+    }
+  }
+
+  //Up Left
+  if (index == cpy_upLeft) {
+    isMove = true;
+    if (the_checker[1].color == "red") {
+      //Move the piece
+      executeMove(multiplier * -1, multiplier * 1, multiplier * 7);
+      //Eliminate the piece if it was jumped
+      if (mustAttack) {
+        elimiateCheck(index - 7);
+      }
+    }
+    else {
+      executeMove(multiplier * -1, multiplier * -1, multiplier * -9);
+      //Eliminate the piece if it was jumps
+      if (mustAttack) {
+        elimiateCheck(index + 9);
+      }
+    }
+  }
+
+  //For King Movements
+  if (the_checker[selectedPieceIndex].king) {
+    //Down Right
+    if (index == cpy_downRight) {
+      isMove = true;
+      if (the_checker[1].color == "red") {
+        //Move the piece
+        executeMove(multiplier * 1, multiplier * -1, multiplier * -7);
+        //Eliminate the piece if it was jumped
+        if (mustAttack) {
+          elimiateCheck(index + 7);
+        }
+      }
+      else {
+        executeMove(multiplier * 1, multiplier * 1, multiplier * 9);
+        //Eliminate the piece if it was jumps
+        if (mustAttack) {
+          elimiateCheck(index - 9);
+        }
+      }
+    }
+
+    //Down Left
+    if (index == cpy_downLeft) {
+      isMove = true;
+      if (the_checker[1].color == "red") {
+        //Move the piece
+        executeMove(multiplier * -1, multiplier * -1, multiplier * -9);
+        //Eliminate the piece if it was jumped
+        if (mustAttack) {
+          elimiateCheck(index + 9);
+        }
+      }
+      else {
+        executeMove(multiplier * -1, multiplier * 1, multiplier * 7);
+        //Eliminate the piece if it was jumps
+        if (mustAttack) {
+          elimiateCheck(index - 7);
+        }
+      }
+    }
+  }
+
+  erase_roads(0);
+  the_checker[selectedPieceIndex].checkIfKing();
+
+  //exchange player turns
+  if (isMove) {
+    //playSound(moveSound);
+    moveTwo = undefined;
+    if (mustAttack) {
+      moveTwo = attackMoves(the_checker[selectedPieceIndex]);
+    }
+    if (moveTwo) {
+      moveOne = the_checker[selectedPieceIndex];
+      showMoves(moveOne);
+    }
+    else {
+      moveOne = undefined;
+      changeTurns(the_checker[1]);
+      gameOver = checkIfLost();
+      if (gameOver) {
+        setTimeout(declareWinner(), 3000);
+        return false;
+      }
+      gameOver = checkForMoves();
+      if (gameOver) {
+        setTimeout(declareWinner(), 3000);
+        return false;
+      }
+    }
+  }
+}
