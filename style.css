@@ -58,10 +58,6 @@ body, html{
 }
 
 .checker {
-  /* width: 80px;
-  height: 80px;
-  position: absolute;
-  cursor: pointer; */
   top:10px;
 	left:10px;
 	width: 54px;

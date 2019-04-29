@@ -388,7 +388,7 @@ function executeMove(x, y, nSquare) {
 function checkMove(aPiece, tLimit, tLimit_Side, moveDir, actualDir) {
   if (aPiece.coordY != tLimit) {
     if (aPiece.coordX != tLimit_Side && !block[aPiece.occupied_square + moveDir].occupied) {
-      block[aPiece.occupied_square + moveDir].id.style.background = "red";
+      block[aPiece.occupied_square + moveDir].id.style.background = "#7f7f7f";
       actualDir = aPiece.occupied_square + moveDir;
     } else {
       actualDir = undefined;
@@ -406,7 +406,7 @@ function checkAttack(check, x, y, negX, negY, squareMove, direction) {
       squareMove].pieceId.color != check.color && !block[check.occupied_square + squareMove * 2].occupied) {
     mustAttack = true;
     direction = check.occupied_square + (squareMove * 2);
-    block[direction].id.style.background = "red";
+    block[direction].id.style.background = "#7f7f7f";
     return direction;
   } else {
     direction = undefined;
@@ -519,11 +519,11 @@ function declareWinner() {
 }
 
 //Play sound effect, might not do This
-function playSound(sound) {
-  if (sound) {
-    sound.play();
-  }
-}
+// function playSound(sound) {
+//   if (sound) {
+//     sound.play();
+//   }
+// }
 
 //Find the size of the window
 function getDimension() {
