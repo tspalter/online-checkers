@@ -12,7 +12,7 @@ var moveDeviation = 10;
 var dimension = 1;
 var selectedPiece, selectedPieceIndex;
 var upRight, upLeft, downRight, downLeft; //movements, all possible for King
-var counter = 0,
+var contor = 0,
   gameOver = 0;
 var bigScreen = 1;
 
@@ -270,14 +270,13 @@ function makeMove(index) {
       executeMove(multiplier * 1, multiplier * 1, multiplier * 9);
       //Eliminate the piece if it was jumped
       if (mustAttack) {
-        elimiateCheck(index - 9);
+        eliminateCheck(index - 9);
       }
-    }
-    else {
+    } else {
       executeMove(multiplier * 1, multiplier * -1, multiplier * -7);
       //Eliminate the piece if it was jumps
       if (mustAttack) {
-        elimiateCheck(index + 7);
+        eliminateCheck(index + 7);
       }
     }
   }
@@ -290,14 +289,13 @@ function makeMove(index) {
       executeMove(multiplier * -1, multiplier * 1, multiplier * 7);
       //Eliminate the piece if it was jumped
       if (mustAttack) {
-        elimiateCheck(index - 7);
+        eliminateCheck(index - 7);
       }
-    }
-    else {
+    } else {
       executeMove(multiplier * -1, multiplier * -1, multiplier * -9);
       //Eliminate the piece if it was jumps
       if (mustAttack) {
-        elimiateCheck(index + 9);
+        eliminateCheck(index + 9);
       }
     }
   }
@@ -312,14 +310,13 @@ function makeMove(index) {
         executeMove(multiplier * 1, multiplier * -1, multiplier * -7);
         //Eliminate the piece if it was jumped
         if (mustAttack) {
-          elimiateCheck(index + 7);
+          eliminateCheck(index + 7);
         }
-      }
-      else {
+      } else {
         executeMove(multiplier * 1, multiplier * 1, multiplier * 9);
         //Eliminate the piece if it was jumps
         if (mustAttack) {
-          elimiateCheck(index - 9);
+          eliminateCheck(index - 9);
         }
       }
     }
@@ -332,14 +329,13 @@ function makeMove(index) {
         executeMove(multiplier * -1, multiplier * -1, multiplier * -9);
         //Eliminate the piece if it was jumped
         if (mustAttack) {
-          elimiateCheck(index + 9);
+          eliminateCheck(index + 9);
         }
-      }
-      else {
+      } else {
         executeMove(multiplier * -1, multiplier * 1, multiplier * 7);
         //Eliminate the piece if it was jumps
         if (mustAttack) {
-          elimiateCheck(index - 7);
+          eliminateCheck(index - 7);
         }
       }
     }
@@ -358,8 +354,7 @@ function makeMove(index) {
     if (moveTwo) {
       moveOne = the_checker[selectedPieceIndex];
       showMoves(moveOne);
-    }
-    else {
+    } else {
       moveOne = undefined;
       changeTurns(the_checker[1]);
       gameOver = checkIfLost();
@@ -372,6 +367,194 @@ function makeMove(index) {
         setTimeout(declareWinner(), 3000);
         return false;
       }
+    }
+  }
+}
+
+//Change Piece position
+function executeMove(x, y, nSquare) {
+  //Shift piece to specific coordinate
+  the_checker[selectedPieceIndex].changeCoord(x, y);
+  the_checker[selectedPieceIndex].setCoord(0, 0);
+  //Leaves current space, moves to next space
+  block[the_checker[selectedPieceIndex].occupied_square].occupied = false;
+  block[the_checker[selectedPieceIndex].occupied_square + nSquare].occupied = true;
+  block[the_checker[selectedPieceIndex].occupied_square + nSquare].pieceId =
+    block[the_checker[selectedPieceIndex].occupied_square].pieceId;
+  block[the_checker[selectedPieceIndex].occupied_square].pieceId = undefined;
+  the_checker[selectedPieceIndex].occupied_square += nSquare;
+}
+
+function checkMove(aPiece, tLimit, tLimit_Side, moveDir, actualDir) {
+  if (aPiece.coordY != tLimit) {
+    if (aPiece.coordX != tLimit_Side && !block[aPiece.occupied_square + moveDir].occupied) {
+      block[aPiece.occupied_square + moveDir].id.style.background = "red";
+      actualDir = aPiece.occupied_square + moveDir;
+    } else {
+      actualDir = undefined;
+    }
+  } else {
+    actualDir = undefined;
+  }
+  return actualDir;
+}
+
+//Check to see if piece can attack
+function checkAttack(check, x, y, negX, negY, squareMove, direction) {
+  if (check.coordX * negX >= x * negX && check.coordY * negY <= y * negY &&
+    block[check.occupied_square + squareMove].occupied && block[check.occupied_square +
+      squareMove].pieceId.color != check.color && !block[check.occupied_square + squareMove * 2].occupied) {
+    mustAttack = true;
+    direction = check.occupied_square + (squareMove * 2);
+    block[direction].id.style.background = "red";
+    return direction;
+  } else {
+    direction = undefined;
+    return direction;
+  }
+}
+
+//Attacked piece is eliminated
+function eliminateCheck(index) {
+  if (index < 1 || index > 64) {
+    return 0;
+  }
+  var x = block[index].pieceId;
+  x.alive = false;
+  block[index].occupied = false;
+  x.id.style.display = "none";
+}
+
+//Attack the opponent!
+function attackMoves(check) {
+  upRight = undefined;
+  upLeft = undefined;
+  downRight = undefined;
+  downLeft = undefined;
+
+  //Attacks available for king pieces
+  if (check.king) {
+    if (check.color == "red") {
+      upRight = checkAttack(check, 6, 3, -1, -1, -7, upRight);
+      upLeft = checkAttack(check, 3, 3, 1, -1, -9, upLeft);
+    } else {
+      downLeft = checkAttack(check, 3, 6, 1, 1, 7, downLeft);
+      downRight = checkAttack(check, 6, 6, -1, 1, 9, downRight);
+    }
+  }
+  if (check.color == "red") {
+    downLeft = checkAttack(check, 3, 6, 1, 1, 7, downLeft);
+    downRight = checkAttack(check, 6, 6, -1, 1, 9, downRight);
+  } else {
+    upRight = checkAttack(check, 6, 3, -1, -1, -7, upRight);
+    upLeft = checkAttack(check, 3, 3, 1, -1, -9, upLeft);
+  }
+
+  if (check.color == "black" && (upRight || upLeft || downLeft || downRight)) {
+    var p = upLeft;
+    upLeft = downLeft;
+    downLeft = p;
+
+    p = upRight;
+    upRight = downRight;
+    downRight = p;
+
+    p = downLeft;
+    downLeft = downRight;
+    downRight = p;
+
+    p = upRight;
+    upRight = upLeft;
+    upLeft = p;
+  }
+  if (upLeft != undefined || upRight != undefined || downLeft != undefined || downRight != undefined) {
+    return true;
+  }
+  return false;
+}
+
+//Change turns between players
+function changeTurns(check) {
+  if (check.color == "red") {
+    the_checker = b_checker;
+  } else {
+    the_checker = r_checker;
+  }
+}
+
+//Check to see if opponent has lost
+function checkIfLost() {
+  var i;
+  for (i = 1; i <= 12; i++) {
+    if (the_checker[i].alive) {
+      return false;
+    }
+  }
+  return true;
+}
+
+//Check to see if piece can move
+function checkForMoves() {
+  var i;
+  for (i = 1; i <= 12; i++) {
+    if (the_checker[i].alive && showMoves(the_checker[i].id)) {
+      erase_roads(0);
+      return false;
+    }
+  }
+  return true;
+}
+
+//Someone has won the game!
+function declareWinner() {
+  //playSound(winSound);  //potentially extra thing to do
+  shade.style.display = "inline";
+  score.style.display = "block";
+
+  if (the_checker[1].color == "red") {
+    score.innerHTML = "Black Wins!";
+  } else {
+    score.innerHTML = "Red Wins!";
+  }
+}
+
+//Play sound effect, might not do This
+function playSound(sound) {
+  if (sound) {
+    sound.play();
+  }
+}
+
+//Find the size of the window
+function getDimension() {
+  contor++;
+  windowHeight = window.innerHeight ||
+    document.documentElement.clientHeight ||
+    document.body.clientHeight;
+  windowWidth = window.innderWidth ||
+    document.documentElement.clientWidth ||
+    document.body.clientWidth;
+}
+
+document.getElementsByTagName("BODY")[0].onresize = function() {
+  getDimension();
+  var cpy_bigScreen = bigScreen;
+
+  if (windowWidth < 650) {
+    moveLength = 50;
+    moveDeviation = 6;
+    if (bigScreen == 1) bigScreen = -1;
+  }
+  if (windowWidth > 650) {
+    moveLength = 80;
+    moveDeviation = 10;
+    if (bigScreen == -1) bigScreen = 1;
+  }
+
+  if (bigScreen != cpy_bigScreen) {
+    for (var i = 1; i <= 12; i++) {
+      b_checker[i].setCoord(0, 0);
+      r_checker[i].setCoord(0, 0);
     }
   }
 }
