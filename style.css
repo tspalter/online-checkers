@@ -8,18 +8,20 @@ body, html{
 }
 
 .intro {
-  margin: auto;
-  font-size: 50px;
+  margin: 0 auto;
+  font-size: 30px;
   font-family: fantasy;
   margin-top: 10px;
-  margin-left: 10px;
+  margin-left: auto;
   background-color: red;
   padding: 0;
   width: 40%;
+  border-radius: 45%;
+  text-align: center;
 }
 
 #subtext {
-  font-size: 30px;
+  font-size: 20px;
 }
 .square {
   float: left;
@@ -46,6 +48,33 @@ body, html{
   margin: 50px auto;
   border-width: 2px;
   border-color: yellow;
+}
+.player {
+  background-color: #1aaaad;
+  color: white;
+  font-size: 20px;
+  font-weight: 45;
+  border-radius: 15%;
+  font-family: fantasy;
+  letter-spacing: 1px;
+  padding-top: 30px;
+  overflow: hidden;
+  position: absolute;
+  text-align: center;
+  top: 20%;
+  width: 350px;
+  height: 200px;
+  z-index: 8;
+}
+
+#p1 {
+  left: 15px;
+  color: red;
+}
+
+#p2 {
+  right: 15px;
+  color: black;
 }
 
 .game_score {
@@ -124,9 +153,20 @@ body, html{
 	}
 
 	.checker{
-		width: 32px;
-		height: 32px;
+		width: 34px;
+		height: 34px;
 	}
+
+  .black_checker {
+    background: url("Black Checker small.png");
+  }
+
+  .red_checker {
+    background: url("Red Checker small.png");
+  }
+  .player {
+    display: none;
+  }
 }
 
 #red_index, #black_index, .square#board {

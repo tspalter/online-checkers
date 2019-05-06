@@ -1,4 +1,5 @@
 //global variables
+var apiKey = "5ccfb25a4e6508572731c933";
 var square_class = document.getElementsByClassName('square');
 var red_checker_class = document.getElementsByClassName('red_checker');
 var black_checker_class = document.getElementsByClassName('black_checker');
@@ -82,11 +83,21 @@ checker.prototype.changeCoord = function(X, Y) {
 checker.prototype.checkIfKing = function() {
   if (this.coordY == 8 && !this.king && this.color == "red") {
     this.king = true;
-    this.id.style.background = "url('Red Checker - King.png')";
+    if (windowWidth < 650) {
+      this.id.style.background = "url('Red Checker - King small.png')";
+    }
+    else {
+      this.id.style.background = "url('Red Checker - King.png')";
+    }
   }
   if (this.coordY == 1 && !this.king && this.color == "black") {
     this.king = true;
-    this.id.style.background = "url('Black Checker - King.png')";
+    if (windowWidth < 650) {
+      this.id.style.background = "url('Black Checker - King small.png')";
+    }
+    else {
+      this.id.style.background = "url('Black Checker - King.png')";
+    }
   }
 }
 
@@ -529,16 +540,66 @@ function getDimension() {
     document.body.clientWidth;
 }
 
+//Handle new PLayer1 form submit
+document.getElementById('p1').addEventListener("submit", function(event) {
+  console.log(event);
+  event.preventDefault();
+  var data = {
+    "name": playerInput.value
+  }
+  //Initialize AJAX
+  var createRequest = new XMLHttpRequest();
+  //Response Handler
+  createRequest.onreadystatechange = function() {
+    //wait for readyState = 4 & 200 response
+    if (this.readyState == 4 && this.status == 200) {
+      //parse JSON
+      var player = JSON.parse(this.responseText);
+      addPlayer(player);
+    } else if (this.readyState == 4) {
+      console.log(this.responseText);
+    }
+  };
+  createRequest.open("POST", "https://api.jsonbin.io/b/5ccfb25a4e6508572731c933/2", true);
+  createRequest.setRequestHeader("Content-type", "application/json");
+  createRequest.setRequestHeader("x-api-key", apiKey);
+  createRequest.send(JSON.stringify(data));
+});
+
+//add Player1 to game
+function addPlayer1(playerData) {
+  var playerText = document.createElement("p");
+  playerText.innerText = playerData.name + ": " + playerData.wins + "-" + playerData.losses;
+  document.getElementById("p1").appendChild(playerText);
+  document.getElementById("playerInput").value = "";
+}
+
 document.getElementsByTagName("BODY")[0].onresize = function() {
   getDimension();
   var cpy_bigScreen = bigScreen;
 
   if (windowWidth < 650) {
+    if (checker.king) {
+      if (checker.color == "red") {
+        this.id.style.background = "url('Red Checker - King small.png')";
+      }
+      else {
+        this.id.style.background = "url('Black Checker - King small.png')";
+      }
+    }
     moveLength = 50;
     moveDeviation = 6;
     if (bigScreen == 1) bigScreen = -1;
   }
   if (windowWidth > 650) {
+    if (checker.king) {
+      if (checker.color == "red") {
+        this.id.style.background = "url('Red Checker - King.png')";
+      }
+      else {
+        this.id.style.background = "url('Black Checker - King.png')";
+      }
+    }
     moveLength = 80;
     moveDeviation = 10;
     if (bigScreen == -1) bigScreen = 1;
