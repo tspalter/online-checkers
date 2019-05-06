@@ -217,16 +217,16 @@ function showMoves(piece) {
 //Function to delete image of Checker
 function erase_roads(piece) {
   if (downRight) {
-    block[downRight].id.style.background = "black";
+    block[downRight].id.style.background = "url('Black Square.jpg')";
   }
   if (downLeft) {
-    block[downLeft].id.style.background = "black";
+    block[downLeft].id.style.background = "url('Black Square.jpg')";
   }
   if (upRight) {
-    block[upRight].id.style.background = "black";
+    block[upRight].id.style.background = "url('Black Square.jpg')";
   }
   if (upLeft) {
-    block[upLeft].id.style.background = "black";
+    block[upLeft].id.style.background = "url('Black Square.jpg')";
   }
 }
 
@@ -388,7 +388,7 @@ function executeMove(x, y, nSquare) {
 function checkMove(aPiece, tLimit, tLimit_Side, moveDir, actualDir) {
   if (aPiece.coordY != tLimit) {
     if (aPiece.coordX != tLimit_Side && !block[aPiece.occupied_square + moveDir].occupied) {
-      block[aPiece.occupied_square + moveDir].id.style.background = "#7f7f7f";
+      block[aPiece.occupied_square + moveDir].id.style.background = "url('Black Square - Highlight.jpg')";
       actualDir = aPiece.occupied_square + moveDir;
     } else {
       actualDir = undefined;
@@ -406,7 +406,7 @@ function checkAttack(check, x, y, negX, negY, squareMove, direction) {
       squareMove].pieceId.color != check.color && !block[check.occupied_square + squareMove * 2].occupied) {
     mustAttack = true;
     direction = check.occupied_square + (squareMove * 2);
-    block[direction].id.style.background = "#7f7f7f";
+    block[direction].id.style.background = "url('Black Square - Highlight.jpg')";
     return direction;
   } else {
     direction = undefined;
