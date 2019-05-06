@@ -82,11 +82,11 @@ checker.prototype.changeCoord = function(X, Y) {
 checker.prototype.checkIfKing = function() {
   if (this.coordY == 8 && !this.king && this.color == "red") {
     this.king = true;
-    this.id.style.border = "4px solid #FFFF00";
+    this.id.style.background = "url('Red Checker - King.png')";
   }
   if (this.coordY == 1 && !this.king && this.color == "black") {
     this.king = true;
-    this.id.style.border = "4px solid #FFFF00";
+    this.id.style.background = "url('Black Checker - King.png')";
   }
 }
 
@@ -507,7 +507,6 @@ function checkForMoves() {
 
 //Someone has won the game!
 function declareWinner() {
-  //playSound(winSound);  //potentially extra thing to do
   shade.style.display = "inline";
   score.style.display = "block";
 
@@ -518,12 +517,6 @@ function declareWinner() {
   }
 }
 
-//Play sound effect, might not do This
-// function playSound(sound) {
-//   if (sound) {
-//     sound.play();
-//   }
-// }
 
 //Find the size of the window
 function getDimension() {
