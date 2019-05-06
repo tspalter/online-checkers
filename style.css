@@ -2,10 +2,25 @@ body, html{
   transition: 1s ease-in-out;
   width: 100%;
   height: 100%;
-  margin: 0 0;
+  margin: auto;
   padding: 0 0;
+  background: url("Wood Table.jpg");
 }
 
+.intro {
+  margin: auto;
+  font-size: 50px;
+  font-family: fantasy;
+  margin-top: 10px;
+  margin-left: 10px;
+  background-color: red;
+  padding: 0;
+  width: 40%;
+}
+
+#subtext {
+  font-size: 30px;
+}
 .square {
   float: left;
   width: 80px;
@@ -28,7 +43,7 @@ body, html{
   position: relative;
   width: 640px;
   height: 640px;
-  margin: 0 auto;
+  margin: 50px auto;
   border-width: 2px;
   border-color: yellow;
 }
@@ -41,6 +56,7 @@ body, html{
   font-weight: 45;
   border-radius: 15%;
   left: 0px;
+  font-family: fantasy;
   letter-spacing: 1px;
   margin: 0 auto;
   padding-top: 30px;
@@ -100,6 +116,10 @@ body, html{
 		width: 400px;
 		height: 400px;
 	}
+
+  .intro {
+    width: 80%;
+  }
 
 	.square{
 		width: 50px;
