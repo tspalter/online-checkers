@@ -548,9 +548,7 @@ document.getElementById('p1').addEventListener("submit", function(event) {
   console.log(event);
   event.preventDefault();
   var data = {
-    "name": player1Input.value,
-    "wins": 0,
-    "losses": 0
+    name: player1Input.value
   }
   //Initialize AJAX
   let createRequest = new XMLHttpRequest();
@@ -560,24 +558,47 @@ document.getElementById('p1').addEventListener("submit", function(event) {
     if (this.readyState == 4 && this.status == 200) {
       //parse JSON
       var player = JSON.parse(this.responseText);
+      // addPlayer1(player);
+      var found = false;
+      for (var p of player.player) {
+        if (p.name === player1Input.value) {
+          found = true;
+          break;
+        }
+      }
+      if (!found) {
+        //Create player
+        createPlayer1(player);
+      }
       addPlayer1(player);
     } else if (this.readyState == 4) {
       console.log(this.responseText);
     }
   };
+  createRequest.open("GET", "https://api.jsonbin.io/b/5ccfb25a4e6508572731c933/7", true);
+  createRequest.setRequestHeader("secret-key", "$2a$10$f4dPyKG5gkCRq8mJ1CfubOzdCVosqm5NLju6WZ5lW8tjJSVZ6vT36");
+  createRequest.setRequestHeader("versioning", "false");
+  createRequest.send();
+});
+
+function createPlayer1(playersData) {
+  var createRequest = new XMLHttpRequest();
+  var newPlayer = {name: player1Input.value, wins: 0, losses: 0};
+  playersData.player.push(newPlayer);
   createRequest.open("PUT", "https://api.jsonbin.io/b/5ccfb25a4e6508572731c933", true);
   createRequest.setRequestHeader("Content-type", "application/json");
   createRequest.setRequestHeader("secret-key", "$2a$10$f4dPyKG5gkCRq8mJ1CfubOzdCVosqm5NLju6WZ5lW8tjJSVZ6vT36");
   createRequest.setRequestHeader("versioning", "false");
-  createRequest.send(JSON.stringify(data));
-});
-
+  createRequest.send(JSON.stringify(playersData));
+}
 //add Player1 to game
-function addPlayer1(playerData) {
+function addPlayer1(playersData) {
   var playerText = document.createElement("p");
-  playerText.innerText = playerData.name + ": " + playerData.wins + "-" + playerData.losses;
+  console.log(playersData.player.name);
+  playerText.innerText = playersData.player.name; //+ ": " + player1Data.wins + "-" + player1Data.losses;
   document.getElementById("p1").appendChild(playerText);
-  document.getElementById("player1Input").value = "";
+  document.getElementById("player1Input").style.display = "none";
+  document.getElementById("add-player1").style.display = "none";
 }
 
 document.getElementsByTagName("BODY")[0].onresize = function() {
