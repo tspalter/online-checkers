@@ -532,16 +532,9 @@ function declareWinner() {
 
   if (the_checker[1].color == "red") {
     if (p2name != "\u00D7") {
+      p2Win = true;
+      winCount(player);
       score.innerHTML = p2name + " Wins!";
-      let createRequest = new XMLHttpRequest();
-
-      createRequest.onreadystatechange = function() {
-        //wait for readyState = 4 & 200 response
-        if (this.readyState == 4 && this.status == 200) {
-          console.log("Got here");
-          winCount(player);
-        }
-      };
     }
     else {
       score.innerHTML = "Black Wins!";
@@ -549,16 +542,9 @@ function declareWinner() {
   }
   else {
     if (p1name != "\u00D7") {
+      p1Win = true;
+      winCount(player);
       score.innerHTML = p1name + " Wins!";
-      let createRequest = new XMLHttpRequest();
-
-      createRequest.onreadystatechange = function() {
-        //wait for readyState = 4 & 200 response
-        if (this.readyState == 4 && this.status == 200) {
-          console.log("Got here");
-          winCount(player);
-        }
-      };
     }
     else {
       score.innerHTML = "Red Wins!";
@@ -568,34 +554,45 @@ function declareWinner() {
 
 function winCount(playersData) {
   let createRequest = new XMLHttpRequest();
-  var data;
+
+  createRequest.onreadystatechange = function() {
+    if (this.readyState == 4 && this.status == 200) {
+      console.log("call complete");
+    }
+    else if (this.readyState == 4) {
+      console.log(this.responseText);
+    }
+  };
   if (p1Win) {
     for (var i = 0; i < playersData.player.length; i++) {
       if (playersData.player[i].name == p1name) {
-        playersData.player[i].wins = playersData.player[i].wins + 1;
+        playersData.player[i].wins++;
       }
     }
-    // if (p2name != "\u00D7") {
-    //   for (var i = 0; i < playersData.player.length; i++) {
-    //     if (playersData.player[i].name == p2name) {
-    //       playersData.player[i].losses = playersData.player[i].losses + 1;
-    //     }
-    //   }
-    // }
+    if (p2name != "\u00D7") {
+      for (var i = 0; i < playersData.player.length; i++) {
+        if (playersData.player[i].name == p2name) {
+          playersData.player[i].losses++;
+        }
+      }
+    }
+    p1Win = false;
   }
   else if (p2Win) {
     for (var i = 0; i < playersData.player.length; i++) {
       if (playersData.player[i].name == p2name) {
-        playersData.player[i].wins = playersData.player[i].wins + 1;
+        playersData.player[i].wins++;
       }
+
     }
     if (p1name != "\u00D7") {
       for (var i = 0; i < playersData.player.length; i++) {
         if (playersData.player[i].name == p1name) {
-          playersData.player[i].losses = playersData.player[i].losses + 1;
+          playersData.player[i].losses++;
         }
       }
     }
+    p2Win = false;
   }
   createRequest.open("PUT", "https://api.jsonbin.io/b/5ccfb25a4e6508572731c933", true);
   createRequest.setRequestHeader("Content-type", "application/json");
@@ -614,6 +611,7 @@ function getDimension() {
     document.documentElement.clientWidth ||
     document.body.clientWidth;
 }
+
 
 //Handle new PLayer1 form submit
 document.getElementById('p1').addEventListener("submit", function(event) {
