@@ -34,6 +34,9 @@ var p2name = "\u00D7";
 var p1Win = false;
 var p2Win = false;
 
+//global var to get player info
+var player;
+
 
 //Find the move distance based on window size
 getDimension();
@@ -530,14 +533,12 @@ function declareWinner() {
   if (the_checker[1].color == "red") {
     if (p2name != "\u00D7") {
       score.innerHTML = p2name + " Wins!";
-      p2Win = true;
       let createRequest = new XMLHttpRequest();
 
       createRequest.onreadystatechange = function() {
         //wait for readyState = 4 & 200 response
         if (this.readyState == 4 && this.status == 200) {
-          //parse JSON
-          var player = JSON.parse(this.responseText);
+          console.log("Got here");
           winCount(player);
         }
       };
@@ -549,15 +550,12 @@ function declareWinner() {
   else {
     if (p1name != "\u00D7") {
       score.innerHTML = p1name + " Wins!";
-      p1Win = true;
       let createRequest = new XMLHttpRequest();
 
       createRequest.onreadystatechange = function() {
         //wait for readyState = 4 & 200 response
         if (this.readyState == 4 && this.status == 200) {
-          //parse JSON
-          var player = JSON.parse(this.responseText);
-          console.log(player);
+          console.log("Got here");
           winCount(player);
         }
       };
@@ -570,35 +568,34 @@ function declareWinner() {
 
 function winCount(playersData) {
   let createRequest = new XMLHttpRequest();
+  var data;
   if (p1Win) {
     for (var i = 0; i < playersData.player.length; i++) {
       if (playersData.player[i].name == p1name) {
-        playersData.player[i].wins++;
+        playersData.player[i].wins = playersData.player[i].wins + 1;
       }
     }
-    if (p2name != "\u00D7") {
-      for (var i = 0; i < playersData.player.length; i++) {
-        if (playersData.player[i].name == p2name) {
-          playersData.player[i].losses++;
-        }
-      }
-    }
-    p1Win = false;
+    // if (p2name != "\u00D7") {
+    //   for (var i = 0; i < playersData.player.length; i++) {
+    //     if (playersData.player[i].name == p2name) {
+    //       playersData.player[i].losses = playersData.player[i].losses + 1;
+    //     }
+    //   }
+    // }
   }
   else if (p2Win) {
     for (var i = 0; i < playersData.player.length; i++) {
       if (playersData.player[i].name == p2name) {
-        playersData.player[i].wins++;
+        playersData.player[i].wins = playersData.player[i].wins + 1;
       }
     }
     if (p1name != "\u00D7") {
       for (var i = 0; i < playersData.player.length; i++) {
         if (playersData.player[i].name == p1name) {
-          playersData.player[i].losses++;
+          playersData.player[i].losses = playersData.player[i].losses + 1;
         }
       }
     }
-    p2Win = false;
   }
   createRequest.open("PUT", "https://api.jsonbin.io/b/5ccfb25a4e6508572731c933", true);
   createRequest.setRequestHeader("Content-type", "application/json");
@@ -632,7 +629,7 @@ document.getElementById('p1').addEventListener("submit", function(event) {
     //wait for readyState = 4 & 200 response
     if (this.readyState == 4 && this.status == 200) {
       //parse JSON
-      var player = JSON.parse(this.responseText);
+      player = JSON.parse(this.responseText);
       // addPlayer1(player);
       var found = false;
       p1name = player1Input.value;
@@ -651,7 +648,7 @@ document.getElementById('p1').addEventListener("submit", function(event) {
       console.log(this.responseText);
     }
   };
-  createRequest.open("GET", "https://api.jsonbin.io/b/5ccfb25a4e6508572731c933/9", true);
+  createRequest.open("GET", "https://api.jsonbin.io/b/5ccfb25a4e6508572731c933/12", true);
   createRequest.setRequestHeader("secret-key", "$2a$10$f4dPyKG5gkCRq8mJ1CfubOzdCVosqm5NLju6WZ5lW8tjJSVZ6vT36");
   createRequest.setRequestHeader("versioning", "false");
   createRequest.send();
@@ -671,7 +668,7 @@ document.getElementById('p2').addEventListener("submit", function(event) {
     //wait for readyState = 4 & 200 response
     if (this.readyState == 4 && this.status == 200) {
       //parse JSON
-      var player = JSON.parse(this.responseText);
+      player = JSON.parse(this.responseText);
       var found = false;
       p2name = player2Input.value;
       for (var p of player.player) {
@@ -689,7 +686,7 @@ document.getElementById('p2').addEventListener("submit", function(event) {
       console.log(this.responseText);
     }
   };
-  createRequest.open("GET", "https://api.jsonbin.io/b/5ccfb25a4e6508572731c933/9", true);
+  createRequest.open("GET", "https://api.jsonbin.io/b/5ccfb25a4e6508572731c933/12", true);
   createRequest.setRequestHeader("secret-key", "$2a$10$f4dPyKG5gkCRq8mJ1CfubOzdCVosqm5NLju6WZ5lW8tjJSVZ6vT36");
   createRequest.setRequestHeader("versioning", "false");
   createRequest.send();

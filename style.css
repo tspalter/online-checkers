@@ -16,8 +16,12 @@ body, html{
   background-color: red;
   padding: 0;
   width: 40%;
-  border-radius: 45%;
+  border-radius: 15%;
   text-align: center;
+}
+
+#instructions {
+  border-radius: 5%;
 }
 
 #subtext {
