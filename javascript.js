@@ -1,5 +1,5 @@
 //global variables
-var apiKey = "5ccfb25a4e6508572731c933";
+var apiKey = "$2a$10$f4dPyKG5gkCRq8mJ1CfubOzdCVosqm5NLju6WZ5lW8tjJSVZ6vT36";
 var square_class = document.getElementsByClassName('square');
 var red_checker_class = document.getElementsByClassName('red_checker');
 var black_checker_class = document.getElementsByClassName('black_checker');
@@ -28,6 +28,9 @@ var multiplier = 1;
 
 var tableLimit, reverse_tableLimit, moveUpLeft, moveUpRight,
   moveDownLeft, moveDownRight, tableLimitLeft, tableLimitRight;
+
+var p1Playing = false;
+var p2Playing = false;
 
 //Find the move distance based on window size
 getDimension();
@@ -545,24 +548,27 @@ document.getElementById('p1').addEventListener("submit", function(event) {
   console.log(event);
   event.preventDefault();
   var data = {
-    "name": playerInput.value
+    "name": player1Input.value,
+    "wins": 0,
+    "losses": 0
   }
   //Initialize AJAX
-  var createRequest = new XMLHttpRequest();
-  //Response Handler
+  let createRequest = new XMLHttpRequest();
+
   createRequest.onreadystatechange = function() {
     //wait for readyState = 4 & 200 response
     if (this.readyState == 4 && this.status == 200) {
       //parse JSON
       var player = JSON.parse(this.responseText);
-      addPlayer(player);
+      addPlayer1(player);
     } else if (this.readyState == 4) {
       console.log(this.responseText);
     }
   };
-  createRequest.open("POST", "https://api.jsonbin.io/b/5ccfb25a4e6508572731c933/2", true);
+  createRequest.open("PUT", "https://api.jsonbin.io/b/5ccfb25a4e6508572731c933", true);
   createRequest.setRequestHeader("Content-type", "application/json");
-  createRequest.setRequestHeader("x-api-key", apiKey);
+  createRequest.setRequestHeader("secret-key", "$2a$10$f4dPyKG5gkCRq8mJ1CfubOzdCVosqm5NLju6WZ5lW8tjJSVZ6vT36");
+  createRequest.setRequestHeader("versioning", "false");
   createRequest.send(JSON.stringify(data));
 });
 
@@ -571,7 +577,7 @@ function addPlayer1(playerData) {
   var playerText = document.createElement("p");
   playerText.innerText = playerData.name + ": " + playerData.wins + "-" + playerData.losses;
   document.getElementById("p1").appendChild(playerText);
-  document.getElementById("playerInput").value = "";
+  document.getElementById("player1Input").value = "";
 }
 
 document.getElementsByTagName("BODY")[0].onresize = function() {
